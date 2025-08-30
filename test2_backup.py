@@ -9,27 +9,24 @@ st.title("📂 Call ID Search App")
 df_csv = None
 df_excel = None
 
-# Upload ZIP file (CSV) - allow all file types for mobile compatibility
-uploaded_zip = st.file_uploader("Upload a ZIP file containing a CSV", type=None)
+# Upload ZIP file (CSV)
+uploaded_zip = st.file_uploader("Upload a ZIP file containing a CSV", type=["zip"])
 
 if uploaded_zip is not None:
-    try:
-        with zipfile.ZipFile(uploaded_zip, "r") as zip_ref:
-            csv_files = [f for f in zip_ref.namelist() if f.endswith(".csv")]
-            if not csv_files:
-                st.error("❌ No CSV file found inside the ZIP.")
-            else:
-                csv_name = csv_files[0]
-                with zip_ref.open(csv_name) as csvfile:
-                    raw_data = csvfile.read()
-                    result = chardet.detect(raw_data)
-                    encoding = result["encoding"]
-                    df_csv = pd.read_csv(io.StringIO(raw_data.decode(encoding)))
-                    df_csv.columns = [c.strip().lower() for c in df_csv.columns]
-                    st.success(f"✅ Loaded {csv_name} (encoding: {encoding})")
-                    st.dataframe(df_csv.head())
-    except zipfile.BadZipFile:
-        st.error("❌ The uploaded file is not a valid ZIP file.")
+    with zipfile.ZipFile(uploaded_zip, "r") as zip_ref:
+        csv_files = [f for f in zip_ref.namelist() if f.endswith(".csv")]
+        if not csv_files:
+            st.error("❌ No CSV file found inside the ZIP.")
+        else:
+            csv_name = csv_files[0]
+            with zip_ref.open(csv_name) as csvfile:
+                raw_data = csvfile.read()
+                result = chardet.detect(raw_data)
+                encoding = result["encoding"]
+                df_csv = pd.read_csv(io.StringIO(raw_data.decode(encoding)))
+                df_csv.columns = [c.strip().lower() for c in df_csv.columns]
+                st.success(f"✅ Loaded {csv_name} (encoding: {encoding})")
+                st.dataframe(df_csv.head())
 
 # Upload Excel file
 uploaded_excel = st.file_uploader("Upload an Excel file", type=["xlsx", "xls"])

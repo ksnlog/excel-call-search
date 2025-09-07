@@ -133,23 +133,6 @@ if st.session_state.excel_path:
     except Exception as e:
         st.error(f"Error reading Excel file: {e}")
 
-# Show Excel preview if loaded (Top 10 by Ageing, specific columns)
-if st.session_state.df_excel is not None:
-    preview_cols = ["call id", "centre", "center", "warranty", "model", "call stage", "ageing", "pending parts", "pending parts desc", "pending parts date"]
-    available_cols = [c for c in preview_cols if c in st.session_state.df_excel.columns]
-    df_preview = st.session_state.df_excel[available_cols].copy()
-    
-    # Ensure "centre" and "center" are unified as "centre"
-    if "center" in df_preview.columns:
-        df_preview.rename(columns={"center": "centre"}, inplace=True)
-    
-    if "ageing" in df_preview.columns:
-        df_preview = df_preview.sort_values(by="ageing", ascending=False).head(10)
-    else:
-        df_preview = df_preview.head(10)
-    
-    st.dataframe(df_preview)
-
 # --- Display shipping information when a Call ID is selected ---
 if st.session_state.selected_call_id:
     call_id = st.session_state.selected_call_id

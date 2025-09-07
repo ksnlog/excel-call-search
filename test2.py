@@ -5,7 +5,7 @@ import chardet
 import io
 import os
 import uuid
-import time  # Added missing import
+import time
 
 st.title("📂 Call ID Search App (Persistent Uploads on Refresh)")
 
@@ -128,7 +128,8 @@ if st.session_state.df_csv is not None:
     if "call id" in display_df.columns:
         display_df["call id"] = display_df["call id"].apply(lambda x: f"🔍 {x}")
     
-    st.dataframe(display_df, use_container_width=True)
+    # FIXED: Replaced use_container_width with width='stretch'
+    st.dataframe(display_df, width='stretch')
     
     if "call id" in df_preview.columns:
         st.write("### 🔍 Select a Call ID to view details:")

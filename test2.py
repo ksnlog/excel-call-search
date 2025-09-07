@@ -22,14 +22,25 @@ if "excel_path" not in st.session_state:
     st.session_state.excel_path = None
 
 # --- Upload ZIP or any file ---
-uploaded_zip = st.file_uploader("Upload a file containing a CSV", type=None)
-
-if uploaded_zip is not None:
-    zip_path = os.path.join(CACHE_DIR, uploaded_zip.name)
-    # Save the uploaded file to disk
-    with open(zip_path, "wb") as f:
-        f.write(uploaded_zip.getbuffer())
-    st.session_state.csv_path = zip_path
+# Check if we already have a file path cached BEFORE showing the uploader
+if st.session_state.csv_path and os.path.exists(st.session_state.csv_path):
+    st.write(f"📁 **Loaded File:** `{os.path.basename(st.session_state.csv_path)}`")
+    if st.button("🗑️ Remove CSV File"):
+        # Clear the cache and session state for the CSV
+        os.remove(st.session_state.csv_path)
+        st.session_state.csv_path = None
+        st.session_state.df_csv = None
+        st.rerun()
+else:
+    # Only show the uploader if no file is cached
+    uploaded_zip = st.file_uploader("Upload a file containing a CSV", type=None)
+    if uploaded_zip is not None:
+        zip_path = os.path.join(CACHE_DIR, uploaded_zip.name)
+        # Save the uploaded file to disk
+        with open(zip_path, "wb") as f:
+            f.write(uploaded_zip.getbuffer())
+        st.session_state.csv_path = zip_path
+        st.rerun() # Trigger a rerun to immediately load the file
 
 # If a file path exists in session_state, load it
 if st.session_state.csv_path:
@@ -70,13 +81,24 @@ if st.session_state.df_csv is not None:
     st.dataframe(df_preview)
 
 # --- Upload Excel file ---
-uploaded_excel = st.file_uploader("Upload an Excel file", type=["xlsx", "xls"])
-
-if uploaded_excel is not None:
-    excel_path = os.path.join(CACHE_DIR, uploaded_excel.name)
-    with open(excel_path, "wb") as f:
-        f.write(uploaded_excel.getbuffer())
-    st.session_state.excel_path = excel_path
+# Check if we already have a file path cached BEFORE showing the uploader
+if st.session_state.excel_path and os.path.exists(st.session_state.excel_path):
+    st.write(f"📁 **Loaded File:** `{os.path.basename(st.session_state.excel_path)}`")
+    if st.button("🗑️ Remove Excel File"):
+        # Clear the cache and session state for the Excel
+        os.remove(st.session_state.excel_path)
+        st.session_state.excel_path = None
+        st.session_state.df_excel = None
+        st.rerun()
+else:
+    # Only show the uploader if no file is cached
+    uploaded_excel = st.file_uploader("Upload an Excel file", type=["xlsx", "xls"])
+    if uploaded_excel is not None:
+        excel_path = os.path.join(CACHE_DIR, uploaded_excel.name)
+        with open(excel_path, "wb") as f:
+            f.write(uploaded_excel.getbuffer())
+        st.session_state.excel_path = excel_path
+        st.rerun() # Trigger a rerun to immediately load the file
 
 # If Excel path exists in session_state, load it
 if st.session_state.excel_path:

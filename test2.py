@@ -65,7 +65,7 @@ if st.session_state.csv_path:
 
 # Show CSV preview if loaded (Top 10 by Ageing, specific columns)
 if st.session_state.df_csv is not None:
-    preview_cols = ["call id", "centre", "center", "warranty", "model", "call stage", "ageing"]
+    preview_cols = ["call id", "centre", "center", "warranty", "model", "call stage", "ageing", "pending parts", "pending parts desc", "pending parts date"]
     available_cols = [c for c in preview_cols if c in st.session_state.df_csv.columns]
     df_preview = st.session_state.df_csv[available_cols].copy()
     
@@ -111,7 +111,7 @@ if st.session_state.excel_path:
 
 # Show Excel preview if loaded (Top 10 by Ageing, specific columns)
 if st.session_state.df_excel is not None:
-    preview_cols = ["call id", "centre", "center", "warranty", "model", "call stage", "ageing"]
+    preview_cols = ["call id", "centre", "center", "warranty", "model", "call stage", "ageing", "pending parts", "pending parts desc", "pending parts date"]
     available_cols = [c for c in preview_cols if c in st.session_state.df_excel.columns]
     df_preview = st.session_state.df_excel[available_cols].copy()
     
